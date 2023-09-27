@@ -6,8 +6,6 @@ One of the ways to achieve this is using WDIO which can be written in any of the
 
 Testing method that will be described in the further reading will be testing using DevTools Service for WDIO.
 
-
-
 Installing from scratch.
 
 Install and setup Node
@@ -18,7 +16,6 @@ nvm
 VSC or other IDE / text editor
 Terminal configure and setup
 
-
 Start with the blank folder.
 Install node version 18 using the nvm.
 Execute the command to start using node version 18 “nvm use 18”
@@ -26,9 +23,7 @@ Using node package manager initialize project by typing “npm init”
 Follow instructions in the prompt to start the project
 package.json file will be generated in the list of files
 
-
 If you encounter any problems in this initial setup refer to the official documentation or this helpful blog
-
 
 Install and setup WDIO
 
@@ -49,20 +44,7 @@ Do you want to add a service to your test setup chose chromedriver
 For baseURL setup baseURL of the test application
 Finally do you want to run NPM install chose yes
 
-
 Packages required for WDIO to work will now be downloaded final folder should look like this:
-
-
-
-
-
-
-
-
-
-
-
-
 
 WDIO getting started documentation can be found here. Use it if you cannot resolve any of the previous steps.
 
@@ -84,34 +66,36 @@ This is the part where we will write down the test to be executed to performance
 Navigate to /tests/ folder and create file name performanceTest.js
 Insert below code snippet inside the above file and save.
 
+capabilities: [
+{
+browserName: "chrome",
+"goog:chromeOptions": {
+args: ["headless", "disable-gpu"],
+},
+},
+],
 
 const { default: expect } = require("expect");
 describe("Open devtools", () => {
 it("should load within performance budget", async () => {
-/**
-* this page load will take a bit longer as the DevTools service will
-* capture all metrics in the background
-*/
-await browser.enablePerformanceAudits();
-await browser.url("http://www.google.com");
+/\*\*
 
+- this page load will take a bit longer as the DevTools service will
+- capture all metrics in the background
+  \*/
+  await browser.enablePerformanceAudits();
+  await browser.url("http://www.google.com");
 
 let metrics = await browser.getMetrics();
 expect(metrics.speedIndex).toBeLessThan(1900); // check that speedIndex is below 1.9 secon
-
 
 let score = await browser.getPerformanceScore(); // get Lighthouse Performance score
 expect(score).toBeGreaterThanOrEqual(0.9); // Lighthouse Performance score is at 90% or higher
 });
 });
 
-
-
-
 Execute the test by running “npx wdio”
 Test will run, open chrome instance, attach to the devtools and run metrics against the site. It should produce terminal output that should look like this:
-
-
 
 Here is the short explanation on how this works and some important tips and tricks.
 It is very important to ether add in the before hook “browser.EnablePerformanceAudit()” function and this must be asynchronous function. Once we are successfully attached to this dev tools instance we will be able to read metrics by running “browser.getMetrics()”.
